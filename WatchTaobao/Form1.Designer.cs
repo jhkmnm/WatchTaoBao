@@ -46,15 +46,11 @@
             this.txt_CaijiUrl = new System.Windows.Forms.TextBox();
             this.tabWatch = new System.Windows.Forms.TabPage();
             this.axWebBrowser1 = new System.Windows.Forms.WebBrowser();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
             this.txt_google = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
-            this.txt_baidu = new System.Windows.Forms.TextBox();
+            this.txtKeyWord = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.cmb_web = new System.Windows.Forms.ComboBox();
             this.btn_end = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.btn_start = new System.Windows.Forms.Button();
             this.cbx_IP = new System.Windows.Forms.CheckBox();
             this.textBox3 = new System.Windows.Forms.TextBox();
@@ -65,6 +61,13 @@
             this.label7 = new System.Windows.Forms.Label();
             this.tmFindIP = new System.Windows.Forms.Timer(this.components);
             this.tmKey = new System.Windows.Forms.Timer(this.components);
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.chkContrast = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
             this.tabMain.SuspendLayout();
             this.tabFindIP.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -224,16 +227,19 @@
             // 
             // tabWatch
             // 
-            this.tabWatch.Controls.Add(this.axWebBrowser1);
-            this.tabWatch.Controls.Add(this.label13);
             this.tabWatch.Controls.Add(this.label12);
+            this.tabWatch.Controls.Add(this.textBox4);
+            this.tabWatch.Controls.Add(this.label4);
+            this.tabWatch.Controls.Add(this.chkContrast);
+            this.tabWatch.Controls.Add(this.label3);
+            this.tabWatch.Controls.Add(this.textBox2);
+            this.tabWatch.Controls.Add(this.label2);
+            this.tabWatch.Controls.Add(this.axWebBrowser1);
             this.tabWatch.Controls.Add(this.txt_google);
             this.tabWatch.Controls.Add(this.label11);
-            this.tabWatch.Controls.Add(this.txt_baidu);
+            this.tabWatch.Controls.Add(this.txtKeyWord);
             this.tabWatch.Controls.Add(this.label10);
-            this.tabWatch.Controls.Add(this.cmb_web);
             this.tabWatch.Controls.Add(this.btn_end);
-            this.tabWatch.Controls.Add(this.button1);
             this.tabWatch.Controls.Add(this.btn_start);
             this.tabWatch.Controls.Add(this.cbx_IP);
             this.tabWatch.Controls.Add(this.textBox3);
@@ -255,93 +261,57 @@
             this.axWebBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.axWebBrowser1.Location = new System.Drawing.Point(6, 101);
+            this.axWebBrowser1.Location = new System.Drawing.Point(6, 130);
             this.axWebBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
             this.axWebBrowser1.Name = "axWebBrowser1";
-            this.axWebBrowser1.Size = new System.Drawing.Size(827, 521);
+            this.axWebBrowser1.Size = new System.Drawing.Size(827, 492);
             this.axWebBrowser1.TabIndex = 69;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(391, 79);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(53, 12);
-            this.label13.TabIndex = 68;
-            this.label13.Text = "统计结果";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(18, 79);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(65, 12);
-            this.label12.TabIndex = 67;
-            this.label12.Text = "搜索类型：";
+            this.axWebBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.axWebBrowser1_DocumentCompleted);
             // 
             // txt_google
             // 
-            this.txt_google.Location = new System.Drawing.Point(525, 43);
+            this.txt_google.Location = new System.Drawing.Point(490, 43);
             this.txt_google.Name = "txt_google";
-            this.txt_google.Size = new System.Drawing.Size(304, 21);
+            this.txt_google.Size = new System.Drawing.Size(138, 21);
             this.txt_google.TabIndex = 66;
-            this.txt_google.Text = "http://www.360yi.net/";
             // 
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(437, 46);
+            this.label11.Location = new System.Drawing.Point(443, 46);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(89, 12);
+            this.label11.Size = new System.Drawing.Size(41, 12);
             this.label11.TabIndex = 65;
-            this.label11.Text = "谷歌搜索结果：";
+            this.label11.Text = "商品ID";
             // 
-            // txt_baidu
+            // txtKeyWord
             // 
-            this.txt_baidu.Location = new System.Drawing.Point(106, 43);
-            this.txt_baidu.Name = "txt_baidu";
-            this.txt_baidu.Size = new System.Drawing.Size(325, 21);
-            this.txt_baidu.TabIndex = 64;
-            this.txt_baidu.Text = "只可意会 | 生活随笔,节日营销,热点评论,it分享,开源软件";
+            this.txtKeyWord.Location = new System.Drawing.Point(83, 43);
+            this.txtKeyWord.Name = "txtKeyWord";
+            this.txtKeyWord.Size = new System.Drawing.Size(325, 21);
+            this.txtKeyWord.TabIndex = 64;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
             this.label10.Location = new System.Drawing.Point(18, 46);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(89, 12);
+            this.label10.Size = new System.Drawing.Size(53, 12);
             this.label10.TabIndex = 63;
-            this.label10.Text = "百度搜索结果：";
-            // 
-            // cmb_web
-            // 
-            this.cmb_web.FormattingEnabled = true;
-            this.cmb_web.Location = new System.Drawing.Point(82, 74);
-            this.cmb_web.Name = "cmb_web";
-            this.cmb_web.Size = new System.Drawing.Size(121, 20);
-            this.cmb_web.TabIndex = 62;
+            this.label10.Text = "关 键 词";
             // 
             // btn_end
             // 
-            this.btn_end.Location = new System.Drawing.Point(299, 72);
+            this.btn_end.Location = new System.Drawing.Point(123, 101);
             this.btn_end.Name = "btn_end";
             this.btn_end.Size = new System.Drawing.Size(75, 23);
             this.btn_end.TabIndex = 61;
             this.btn_end.Text = "暂停";
             this.btn_end.UseVisualStyleBackColor = true;
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(466, 71);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 59;
-            this.button1.Text = "启动";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // btn_start
             // 
-            this.btn_start.Location = new System.Drawing.Point(209, 72);
+            this.btn_start.Location = new System.Drawing.Point(22, 101);
             this.btn_start.Name = "btn_start";
             this.btn_start.Size = new System.Drawing.Size(75, 23);
             this.btn_start.TabIndex = 60;
@@ -354,7 +324,7 @@
             this.cbx_IP.AutoSize = true;
             this.cbx_IP.Checked = true;
             this.cbx_IP.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbx_IP.Location = new System.Drawing.Point(645, 22);
+            this.cbx_IP.Location = new System.Drawing.Point(620, 18);
             this.cbx_IP.Name = "cbx_IP";
             this.cbx_IP.Size = new System.Drawing.Size(156, 16);
             this.cbx_IP.TabIndex = 58;
@@ -363,24 +333,24 @@
             // 
             // textBox3
             // 
-            this.textBox3.Location = new System.Drawing.Point(350, 16);
+            this.textBox3.Location = new System.Drawing.Point(322, 16);
             this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(66, 21);
+            this.textBox3.Size = new System.Drawing.Size(33, 21);
             this.textBox3.TabIndex = 57;
             this.textBox3.Text = "60";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(231, 22);
+            this.label9.Location = new System.Drawing.Point(191, 19);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(125, 12);
             this.label9.TabIndex = 56;
-            this.label9.Text = "网站停留时间（秒）：";
+            this.label9.Text = "随机间隔时间（秒）：";
             // 
             // textBox1
             // 
-            this.textBox1.Location = new System.Drawing.Point(562, 16);
+            this.textBox1.Location = new System.Drawing.Point(526, 16);
             this.textBox1.Name = "textBox1";
             this.textBox1.Size = new System.Drawing.Size(66, 21);
             this.textBox1.TabIndex = 55;
@@ -389,28 +359,28 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(443, 22);
+            this.label8.Location = new System.Drawing.Point(443, 19);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(125, 12);
+            this.label8.Size = new System.Drawing.Size(77, 12);
             this.label8.TabIndex = 54;
-            this.label8.Text = "广告停留时间（秒）：";
+            this.label8.Text = "最大搜索页数";
             // 
             // txt_time
             // 
-            this.txt_time.Location = new System.Drawing.Point(143, 13);
+            this.txt_time.Location = new System.Drawing.Point(83, 16);
             this.txt_time.Name = "txt_time";
-            this.txt_time.Size = new System.Drawing.Size(66, 21);
+            this.txt_time.Size = new System.Drawing.Size(45, 21);
             this.txt_time.TabIndex = 53;
             this.txt_time.Text = "2";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(24, 19);
+            this.label7.Location = new System.Drawing.Point(18, 19);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(125, 12);
+            this.label7.Size = new System.Drawing.Size(59, 12);
             this.label7.TabIndex = 52;
-            this.label7.Text = "点击停顿时间（秒）：";
+            this.label7.Text = "优化次数:";
             // 
             // tmFindIP
             // 
@@ -420,6 +390,68 @@
             // tmKey
             // 
             this.tmKey.Tick += new System.EventHandler(this.tmKey_Tick);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(134, 19);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(17, 12);
+            this.label2.TabIndex = 70;
+            this.label2.Text = "次";
+            // 
+            // textBox2
+            // 
+            this.textBox2.Location = new System.Drawing.Point(375, 16);
+            this.textBox2.Name = "textBox2";
+            this.textBox2.Size = new System.Drawing.Size(33, 21);
+            this.textBox2.TabIndex = 71;
+            this.textBox2.Text = "60";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(361, 19);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(11, 12);
+            this.label3.TabIndex = 72;
+            this.label3.Text = "-";
+            // 
+            // chkContrast
+            // 
+            this.chkContrast.AutoSize = true;
+            this.chkContrast.Location = new System.Drawing.Point(20, 76);
+            this.chkContrast.Name = "chkContrast";
+            this.chkContrast.Size = new System.Drawing.Size(96, 16);
+            this.chkContrast.TabIndex = 73;
+            this.chkContrast.Text = "是否货比三家";
+            this.chkContrast.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(191, 77);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(101, 12);
+            this.label4.TabIndex = 74;
+            this.label4.Text = "随机进行深度浏览";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Location = new System.Drawing.Point(298, 71);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(74, 21);
+            this.textBox4.TabIndex = 75;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.ForeColor = System.Drawing.Color.Red;
+            this.label12.Location = new System.Drawing.Point(383, 74);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(239, 12);
+            this.label12.TabIndex = 76;
+            this.label12.Text = "设置0不会进行深度浏览,请设置3以内的数字";
             // 
             // Form1
             // 
@@ -459,15 +491,11 @@
         private System.Windows.Forms.TabPage tabWatch;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.Timer tmFindIP;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox txt_google;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.TextBox txt_baidu;
+        private System.Windows.Forms.TextBox txtKeyWord;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.ComboBox cmb_web;
         private System.Windows.Forms.Button btn_end;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button btn_start;
         private System.Windows.Forms.CheckBox cbx_IP;
         private System.Windows.Forms.TextBox textBox3;
@@ -478,6 +506,13 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.WebBrowser axWebBrowser1;
         private System.Windows.Forms.Timer tmKey;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.CheckBox chkContrast;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.Label label2;
     }
 }
 

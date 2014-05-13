@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -336,7 +337,7 @@ namespace WatchTaobao
 
         private void btn_start_Click(object sender, EventArgs e)
         {
-            timer2.Start();
+            tmKey.Start();
             this.btn_start.Enabled = false;
         }
 
@@ -344,26 +345,23 @@ namespace WatchTaobao
         {
             try
             {
-                timer2.Interval = 60000;//30秒一次
-                ComboBoxItem item = cmb_web.SelectedItem as ComboBoxItem;
-                var url = item.Value.ToString();
+                tmKey.Interval = 60000;//30秒一次                
+                var url = "www.taobao.com";
                 //验证代理IP
-                Model.IpModel model = GetCanUseIp();
-                var ipresult = YanzhengIp(model.Ip, int.Parse(model.IpPort));
-                if (ipresult != null && ipresult != "Error")
-                {
-                    model.UsedNumber++;
-                    model.LastUseTime = DateTime.Now;
-                    SetProxy(model.Ip + ":" + model.IpPort);
-                    //CustomLib.Log.logger(model.Ip + ":" + model.IpPort + ";" + DateTime.Now);
-                    WriteLog(model.Ip + ":" + model.IpPort, "");
+                //Model.IpModel model = GetCanUseIp();
+                //var ipresult = YanzhengIp(model.Ip, int.Parse(model.IpPort));
+                //if (ipresult != null && ipresult != "Error")
+                //{
+                    //model.UsedNumber++;
+                    //model.LastUseTime = DateTime.Now;
+                    ////SetProxy(model.Ip + ":" + model.IpPort);
+                    //WriteLog(model.Ip + ":" + model.IpPort, "");
                     axWebBrowser1.Navigate(url);
-                }
-                else
-                {
-
-                    WriteLog(model.Ip + ":" + model.IpPort, "代理IP不可用");
-                }
+                //}
+                //else
+                //{
+                //    //WriteLog(model.Ip + ":" + model.IpPort, "代理IP不可用");
+                //}
             }
             catch (Exception ex)
             {
@@ -376,8 +374,83 @@ namespace WatchTaobao
             List<Model.IpModel> listtemp = iplist.Where(a => a.DaiLiType == 0 && a.UsedNumber < 6).ToList();
             return CustomLib.OtherHelper.GetRandomList(listtemp).First(a => a.Ip.Length > 0);
         }
+
+        private void axWebBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+        {
+            KeySearch();
+        }
+
+        private void KeySearch()
+        {
+            try
+            {
+                var mm = this.axWebBrowser1.Document;
+                var webtitile = this.axWebBrowser1.Document.Title;
+                if (webtitile == "淘宝网 - 淘！我喜欢")
+                {
+                    HtmlElement txtcontent = axWebBrowser1.Document.GetElementById("q");
+                    HtmlElement btnSubmit = axWebBrowser1.Document.GetElementsByTagName("button")[0];
+                    if (txtcontent == null || btnSubmit == null)
+                    {
+                        return;
+                    }
+                    var keywords = txtKeyWord.Text;// "我的美丽日记";
+                    txtcontent.SetAttribute("value", keywords);
+                    int xxvlaue = 1000;
+                    Thread.Sleep(xxvlaue);
+                    btnSubmit.InvokeMember("click");
+                }
+                else if (this.axWebBrowser1.Url.ToString().IndexOf("www.baidu.com") >= 0)
+                {
+                    //HtmlElementCollection link = axWebBrowser1.Document.GetElementsByTagName("a");
+                    //for (int i = 0; i < link.Count; i++)
+                    //{
+                    //    if (!string.IsNullOrEmpty(link[i].InnerText))
+                    //    {
+                    //        var xxtitle = this.txt_baidu.Text;
+                    //        if (link[i].InnerText.IndexOf(xxtitle) != -1)
+                    //        {
+                    //            weburl = link[i].GetAttribute("href");
+                    //            link[i].InvokeMember("click");
+                    //        }
+                    //    }
+                    //}
+                }
+                else if (this.axWebBrowser1.Url.ToString().IndexOf("www.360yi.net") >= 0
+                    ||
+                    this.axWebBrowser1.Url.ToString().IndexOf("suchso.com") >= 0
+                    )
+                {
+                    //timerClickAds.Interval = 20000;// 
+
+                    //timerClickAds.Start();
+                }
+                else
+                {
+                    axWebBrowser1.Document.Window.ScrollTo(0, axWebBrowser1.Document.Body.ScrollRectangle.Height / 10);
+                }
+            }
+            catch (Exception ex)
+            {
+                //CustomLib.Log.logger(ex.Message);
+            }
+        }
         #endregion
 
+        [DllImport(@"wininet",
+ SetLastError = true,
+ CharSet = CharSet.Auto,
+ EntryPoint = "InternetSetOption",
+ CallingConvention = CallingConvention.StdCall)]
+        public static extern bool InternetSetOption
+        (
+        int hInternet,
+        int dmOption,
+        IntPtr lpBuffer,
+        int dwBufferLength
+        );
+
+        
 
     }
 }
