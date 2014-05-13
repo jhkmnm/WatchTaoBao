@@ -428,6 +428,7 @@ namespace WatchTaobao
                 else
                 {
                     //滚动条
+                    //还要输入密码吗
                     axWebBrowser1.Document.Window.ScrollTo(0, axWebBrowser1.Document.Body.ScrollRectangle.Height / 10);
                 }
             }
