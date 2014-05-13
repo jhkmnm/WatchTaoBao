@@ -422,11 +422,12 @@ namespace WatchTaobao
                     )
                 {
                     //timerClickAds.Interval = 20000;// 
-
+                    //
                     //timerClickAds.Start();
                 }
                 else
                 {
+                    //滚动条
                     axWebBrowser1.Document.Window.ScrollTo(0, axWebBrowser1.Document.Body.ScrollRectangle.Height / 10);
                 }
             }
