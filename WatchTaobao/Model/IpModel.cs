@@ -21,10 +21,16 @@ namespace WatchTaobao.Model
         private int? _isuse;
         private int? _iptype;
 
+        /// <summary>
+        /// 已经使用的次数
+        /// </summary>
         public int UsedNumber { get; set; }
 
         public int DaiLiType { get; set; }
 
+        /// <summary>
+        /// 最后使用时间
+        /// </summary>
         public DateTime LastUseTime { get; set; }
         /// <summary>
         /// 
