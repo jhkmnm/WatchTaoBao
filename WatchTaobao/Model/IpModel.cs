@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace WatchTaobao.Model
 {
     /// <summary>
-    /// Ip:实体类(属性说明自动提取数据库字段的描述信息)
+    /// Ip:实体类
     /// </summary>
     [Serializable]
     public partial class IpModel
