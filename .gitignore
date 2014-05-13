@@ -6,7 +6,5 @@ HtmlAgilityPack/obj/
 HtmlAgilityPack/bin/
 CustomLib/bin/
 CustomLib/obj/
-WatchTaobao/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
-WatchTaobao/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
-WatchTaobao/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
-WatchTaobao/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+*.cache
+
