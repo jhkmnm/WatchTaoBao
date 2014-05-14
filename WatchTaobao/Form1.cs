@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using HtmlAgilityPack;
 using Microsoft.Win32;
 using WatchTaobao.Model;
+using mshtml;
 
 namespace WatchTaobao
 {
@@ -31,11 +32,24 @@ namespace WatchTaobao
         public Form1()
         {
             InitializeComponent();
-
+            BindCaiJiTypeData();
             GetLocalIP();
         }
 
         #region 采集代理IP
+
+        public void BindCaiJiTypeData()
+        {
+            ComboBoxItem cbi1 = new ComboBoxItem();
+            cbi1.Text = "国内代理";
+            cbi1.Value = "1";
+            cbx_caijitype.Items.Add(cbi1);
+            ComboBoxItem cbi2 = new ComboBoxItem();
+            cbi2.Text = "国外代理";
+            cbi2.Value = "2";
+            cbx_caijitype.Items.Add(cbi2);
+            cbx_caijitype.SelectedIndex = 0;
+        }
         private void btn_caiji_Click(object sender, EventArgs e)
         {
             this.btn_caiji.Enabled = false;            
@@ -321,7 +335,7 @@ namespace WatchTaobao
         /// <summary>
         /// 每次滚动屏幕的高度
         /// </summary>
-        private const int height = 200;
+        private const int height = 500;
         /// <summary>
         /// 已经移动滚动条的次数
         /// </summary>
@@ -379,7 +393,7 @@ namespace WatchTaobao
                 
                 model = watchCommon.InitWatch(out scantime);
                 tmKey.Interval = scantime * 60 * interval;
-                var url = "www.taobao.com";
+                var url = "http://www.taobao.com/";
                 //验证代理IP                
                 var ipresult = Util.YanzhengIp(model.Ip, int.Parse(model.IpPort));
                 if (ipresult)
@@ -401,6 +415,8 @@ namespace WatchTaobao
 
         private void axWebBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
+            Util.SetAllWebItemSelf(this.myWebBrowser.Document.All);
+
             switch (Status)
             {
                 case "KeySearch":
@@ -492,11 +508,11 @@ namespace WatchTaobao
             try
             {
                 Thread.Sleep(txtInterval.Text.ToInt());
-
+                HtmlElement nextpage = null;
                 //如果找到产品,将pageindex=0,跳转到商品页面Status = "BrowseProducts";
-                string link = SearchLink(txtProductID.Text);
+                HtmlElement link = SearchLink(txtProductID.Text, out nextpage);
 
-                if (link == "")
+                if (link == null)
                 {
                     pageindex++;
 
@@ -504,11 +520,18 @@ namespace WatchTaobao
                     {
                         //结束当前的过程,需要调整最大搜索页面
                     }
+                    else
+                    {
+                        if (nextpage != null)
+                        {
+                            nextpage.InvokeMember("click");
+                        }
+                    }
                 }
                 else
                 {
                     Status = "BrowseProducts";
-                    myWebBrowser.Navigate(link);
+                    link.InvokeMember("click");
                 }
             }
             catch (Exception ex)
@@ -543,7 +566,7 @@ namespace WatchTaobao
         /// <param name="e"></param>
         private void tmBrowse_Tick(object sender, EventArgs e)
         {
-            int pagetime = (scantime / pagecount) * 60 * interval;
+            int pagetime = (int)((scantime / (pagecount * 1.00)) * 60 * interval);
             tmBrowse.Interval = pagetime;
             tmBrowse.Enabled = false;
 
@@ -574,8 +597,9 @@ namespace WatchTaobao
             movebarcount = 0;
 
             //查找商品的链接
-            string link = SearchLink("");
-            myWebBrowser.Navigate(link);
+            HtmlElement nextpage = null;
+            HtmlElement link = SearchLink("", out nextpage);
+            link.InvokeMember("click");
         }
 
         /// <summary>
@@ -583,17 +607,52 @@ namespace WatchTaobao
         /// </summary>
         /// <param name="productID"></param>
         /// <returns></returns>
-        private string SearchLink(string productID)
+        private HtmlElement SearchLink(string productID, out HtmlElement nexpage)
         {
+            HtmlElement link = null;
             int index = 0;
+            nexpage = null;
+
             if (productID.Length > 0)
             {
-                //brix_brick_40
+                HtmlElement txt = myWebBrowser.Document.GetElementById("page");                
+                var divs = txt.GetElementsByTagName("div");
 
-                WriteLog(string.Format("{0}目前排名是 第{1}页  第{2}位", productID, pageindex.ToString(), index.ToString()), "");
+                foreach (HtmlElement v in divs)
+                {
+                    string classname = ((mshtml.HTMLDivElement)v.DomElement).className;
+                    if (classname == "row grid-view")
+                    {
+                        for (int i = 0; i < v.Children.Count; i++)
+                        {
+                            var s = v.Children[i];
+                            if (s.InnerHtml.IndexOf(productID) > 0)
+                            {
+                                index = i;
+                                var a = s.GetElementsByTagName("a");
+                                link = a[0];
+                                //Regex reg = new Regex("http\\s*(?:\"(?<1>[^\"]*)\"|(?<1>\\S+))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+                                //MatchCollection mc = reg.Matches(a[0].OuterHtml);
+                                //link = mc[0].Value;
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                    else if (classname == "page-top")
+                    {
+                        nexpage = v.GetElementsByTagName("a")[1];
+                    }
+                }
+
+                if (link != null)
+                {
+                    WriteLog(string.Format("{0}目前排名是 第{1}页  第{2}位", productID, pageindex.ToString(), index.ToString()), "");
+                }
+                return link;
             }
 
-            return "";
+            return link;
         }
         #endregion        
     }

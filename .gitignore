@@ -4,3 +4,5 @@ CustomLib/obj/
 HtmlAgilityPack/bin/
 HtmlAgilityPack/obj/
 WatchTaobao/bin/
+WatchTaobao/obj/
+*.suo

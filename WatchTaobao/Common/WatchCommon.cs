@@ -222,7 +222,7 @@ namespace WatchTaobao
                 //设置代理IP
                 WebProxy proxyObject = new WebProxy(IP, port);
                 //向指定地址发送请求
-                HttpWebRequest HttpWReq = (HttpWebRequest)WebRequest.Create("http://www.baidu.com");
+                HttpWebRequest HttpWReq = (HttpWebRequest)WebRequest.Create("http://www.taobao.com/");
                 HttpWReq.Proxy = proxyObject;
                 HttpWebResponse HttpWResp = (HttpWebResponse)HttpWReq.GetResponse();
                 HttpWReq.Timeout = 6000;
@@ -239,6 +239,38 @@ namespace WatchTaobao
                 isok = false;
             }
             return false;
+        }
+
+        public static void SetAllWebItemSelf(HtmlElementCollection items)
+        {
+            try
+            {
+                foreach (HtmlElement item in items)
+                {
+                    if (item.TagName.ToLower().Equals("iframe", StringComparison.OrdinalIgnoreCase) == false)
+                    {
+                        try
+                        {
+                            item.SetAttribute("target", "_self");
+                        }
+                        catch
+                        { }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            HtmlElementCollection fitems = item.Document.Window.Frames[item.Name].Document.All;
+                            SetAllWebItemSelf(fitems);
+                        }
+                        catch
+                        { }
+                    }
+                }
+            }
+            catch
+            {
+            }
         }
     }
 }

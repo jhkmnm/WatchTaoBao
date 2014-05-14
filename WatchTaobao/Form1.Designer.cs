@@ -45,6 +45,7 @@
             this.btn_caiji = new System.Windows.Forms.Button();
             this.txt_CaijiUrl = new System.Windows.Forms.TextBox();
             this.tabWatch = new System.Windows.Forms.TabPage();
+            this.txtInterval = new System.Windows.Forms.TextBox();
             this.txtArea = new System.Windows.Forms.TextBox();
             this.label15 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
@@ -75,7 +76,6 @@
             this.tmFindIP = new System.Windows.Forms.Timer(this.components);
             this.tmKey = new System.Windows.Forms.Timer(this.components);
             this.tmBrowse = new System.Windows.Forms.Timer(this.components);
-            this.txtInterval = new System.Windows.Forms.TextBox();
             this.tabMain.SuspendLayout();
             this.tabFindIP.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -271,8 +271,17 @@
             this.tabWatch.Text = "刷关键字";
             this.tabWatch.UseVisualStyleBackColor = true;
             // 
+            // txtInterval
+            // 
+            this.txtInterval.Location = new System.Drawing.Point(741, 43);
+            this.txtInterval.Name = "txtInterval";
+            this.txtInterval.Size = new System.Drawing.Size(92, 21);
+            this.txtInterval.TabIndex = 83;
+            this.txtInterval.Text = "5000";
+            // 
             // txtArea
             // 
+            this.txtArea.Enabled = false;
             this.txtArea.Location = new System.Drawing.Point(322, 70);
             this.txtArea.Name = "txtArea";
             this.txtArea.Size = new System.Drawing.Size(74, 21);
@@ -298,14 +307,16 @@
             // 
             // txtPriceEnd
             // 
+            this.txtPriceEnd.Enabled = false;
             this.txtPriceEnd.Location = new System.Drawing.Point(139, 70);
             this.txtPriceEnd.Name = "txtPriceEnd";
             this.txtPriceEnd.Size = new System.Drawing.Size(33, 21);
             this.txtPriceEnd.TabIndex = 79;
-            this.txtPriceEnd.Text = "60";
+            this.txtPriceEnd.Text = "0";
             // 
             // txtPriceStart
             // 
+            this.txtPriceStart.Enabled = false;
             this.txtPriceStart.Location = new System.Drawing.Point(83, 70);
             this.txtPriceStart.Name = "txtPriceStart";
             this.txtPriceStart.Size = new System.Drawing.Size(33, 21);
@@ -333,6 +344,7 @@
             // 
             // txtDepthView
             // 
+            this.txtDepthView.Enabled = false;
             this.txtDepthView.Location = new System.Drawing.Point(298, 103);
             this.txtDepthView.Name = "txtDepthView";
             this.txtDepthView.Size = new System.Drawing.Size(74, 21);
@@ -350,6 +362,7 @@
             // chkContrast
             // 
             this.chkContrast.AutoSize = true;
+            this.chkContrast.Enabled = false;
             this.chkContrast.Location = new System.Drawing.Point(20, 108);
             this.chkContrast.Name = "chkContrast";
             this.chkContrast.Size = new System.Drawing.Size(96, 16);
@@ -522,14 +535,6 @@
             // tmBrowse
             // 
             this.tmBrowse.Tick += new System.EventHandler(this.tmBrowse_Tick);
-            // 
-            // txtInterval
-            // 
-            this.txtInterval.Location = new System.Drawing.Point(741, 43);
-            this.txtInterval.Name = "txtInterval";
-            this.txtInterval.Size = new System.Drawing.Size(92, 21);
-            this.txtInterval.TabIndex = 83;
-            this.txtInterval.Text = "5000";
             // 
             // Form1
             // 
