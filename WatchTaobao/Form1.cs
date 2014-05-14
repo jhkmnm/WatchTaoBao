@@ -31,6 +31,8 @@ namespace WatchTaobao
         public Form1()
         {
             InitializeComponent();
+
+            GetLocalIP();
         }
 
         #region 采集代理IP
@@ -70,7 +72,7 @@ namespace WatchTaobao
             }
             catch (Exception e)
             {
-                Form1.WriteLog(e.Message, e.StackTrace);
+                WriteLog(e.Message, e.StackTrace);
             }
         }
 
@@ -224,11 +226,35 @@ namespace WatchTaobao
                 sbIP.AppendLine(string.Format("{1}{0}{2}{0}{3}{0}{4}{0}{5}", " ", ipmodel.Ip, ipmodel.IpPort, ipmodel.IpType, ipmodel.IsUse, ipmodel.DaiLiType));
             }
 
-            using (FileStream file = new FileStream("D:\\IP.txt", FileMode.OpenOrCreate))
+            string fillname = Environment.CurrentDirectory + "\\IP.txt";
+            using (FileStream file = new FileStream(fillname, FileMode.OpenOrCreate))
             {
                 byte[] buffer = Encoding.Default.GetBytes(sbIP.ToString());
                 file.Write(buffer, 0, buffer.Length);
             }
+        }
+
+        private void GetLocalIP()
+        { 
+            string fillname = Environment.CurrentDirectory + "\\IP.txt";
+
+            using (StreamReader srReadFile = new StreamReader(fillname))
+            {
+                iplist.Clear();
+                while (!srReadFile.EndOfStream)
+                {
+                    IpModel model = new IpModel();
+                    string strReadLine = srReadFile.ReadLine();
+                    string[] strs = strReadLine.Split(' ');
+                    model.Ip = strs[0];
+                    model.IpPort = strs[1];
+                    model.IpType = strs[2].ToInt(0);
+                    model.IsUse = strs[3].ToInt(0);
+                    model.DaiLiType = strs[4].ToInt(0);
+
+                    iplist.Add(model);
+                }
+            }            
         }
 
         /// <summary>
@@ -259,10 +285,10 @@ namespace WatchTaobao
         }
         #endregion
 
-        public static void WriteLog(string message, string stackTrace)
+        public void WriteLog(string message, string stackTrace)
         {
             string dividing = "-------------------------------";
-            this.txtLog.Text = string.Format("{0}{1}{2}{1}{3}{1}{0}", dividing, Environment.NewLine, message, stackTrace);
+            txtLog.Text = string.Format("{0}{1}{2}{1}{3}{1}{0}", dividing, Environment.NewLine, message, stackTrace);
         }
 
         public class ComboBoxItem
@@ -341,8 +367,8 @@ namespace WatchTaobao
             watchCommon = new WatchCommon(iplist, txtScanStart.Text.ToInt(5), txtScanEnd.Text.ToInt(10), txtCount.Text.ToInt(1), txtDepthView.Text.ToInt(0));
             tmKey.Start();
             this.btn_start.Enabled = false;
-            isChoosePrice = !txtPriceStart.Text.ToInt(0) > 0;
-            isChooseAre = !txtArea.Text.Length > 0;
+            isChoosePrice = !(txtPriceStart.Text.ToInt(0) > 0);
+            isChooseAre = !(txtArea.Text.Length > 0);
         }
 
         private void tmKey_Tick(object sender, EventArgs e)
@@ -499,7 +525,7 @@ namespace WatchTaobao
             Thread.Sleep(txtInterval.Text.ToInt());
 
             IPAndProduct pap = new IPAndProduct();
-            pap.ID = model.id;
+            pap.ID = model.Id;
             pap.ProductID = "";
             pap.Number++;
             papList.Add(pap);

@@ -1,10 +1,6 @@
 ﻿
-
-WatchTaobao/bin/
-WatchTaobao/obj/
-HtmlAgilityPack/obj/
-HtmlAgilityPack/bin/
 CustomLib/bin/
 CustomLib/obj/
-*.cache
-
+HtmlAgilityPack/bin/
+HtmlAgilityPack/obj/
+WatchTaobao/bin/
