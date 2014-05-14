@@ -83,4 +83,14 @@ namespace WatchTaobao.Model
         public int DaiLi { get; set; }
 
     }
+
+    /// <summary>
+    /// IP访问过的产品
+    /// </summary>
+    public class IPAndProduct
+    {
+        public string IP { get; set; }
+        public string ProductID { get; set; }
+        public int Number { get; set; }
+    }
 }

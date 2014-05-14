@@ -70,7 +70,7 @@ namespace WatchTaobao
             }
             catch (Exception e)
             {
-                WriteLog(e.Message, e.StackTrace);
+                Form1.WriteLog(e.Message, e.StackTrace);
             }
         }
 
@@ -183,8 +183,8 @@ namespace WatchTaobao
                 ipmodel.Ip = arr[0].Replace("\r", "").Replace("\n", "").Trim();
                 ipmodel.IpPort = arr[1];
 
-                var ipresult = YanzhengIp(ipmodel.Ip, int.Parse(ipmodel.IpPort));
-                if (ipresult != null && ipresult != "Error")
+                var ipresult = Util.YanzhengIp(ipmodel.Ip, int.Parse(ipmodel.IpPort));
+                if (ipresult/* != null && ipresult != "Error"*/)
                 {
                     ComboBoxItem item = cbx_caijitype.SelectedItem as ComboBoxItem;
                     ipmodel.IpType = int.Parse(item.Value.ToString());
@@ -250,45 +250,7 @@ namespace WatchTaobao
                 }
             }
             return listurl;
-        }
-        
-        /// <summary>
-        /// 验证代理IP是否有效的方法
-        /// </summary>
-        /// <param name="IP"></param>
-        /// <param name="port"></param>
-        /// <returns></returns>
-        private String YanzhengIp(string IP, int port)
-        {
-            bool isok = true;
-            string rs = null;
-            while (isok)
-            {
-                try
-                {
-                    //设置代理IP
-                    WebProxy proxyObject = new WebProxy(IP, port);
-                    //向指定地址发送请求
-                    HttpWebRequest HttpWReq = (HttpWebRequest)WebRequest.Create("http://www.baidu.com");
-                    HttpWReq.Proxy = proxyObject;
-                    HttpWebResponse HttpWResp = (HttpWebResponse)HttpWReq.GetResponse();
-                    HttpWReq.Timeout = 6000;
-                    StreamReader sr = new StreamReader(HttpWResp.GetResponseStream(), System.Text.Encoding.GetEncoding("UTF-8"));
-                    string xmlContent = sr.ReadToEnd().Trim();
-                    sr.Close();
-                    HttpWResp.Close();
-                    HttpWReq.Abort();
-                    rs = xmlContent;
-                    isok = false;
-                }
-                catch (Exception)
-                {
-                    isok = false;
-                    rs = "Error";
-                }
-            }
-            return rs;
-        }
+        }       
 
         private void tmFindIP_Tick(object sender, EventArgs e)
         {
@@ -297,10 +259,10 @@ namespace WatchTaobao
         }
         #endregion
 
-        private void WriteLog(string message, string stackTrace)
+        public static void WriteLog(string message, string stackTrace)
         {
             string dividing = "-------------------------------";
-            txtLog.Text = string.Format("{0}{1}{2}{1}{3}{1}{0}", dividing, Environment.NewLine, message, stackTrace);
+            this.txtLog.Text = string.Format("{0}{1}{2}{1}{3}{1}{0}", dividing, Environment.NewLine, message, stackTrace);
         }
 
         public class ComboBoxItem
@@ -315,53 +277,92 @@ namespace WatchTaobao
             }
         }
 
-        #region 刷排名
-        public void SetProxy(string ip_port)
-        {
-            //打开注册表
-            RegistryKey regKey = Registry.CurrentUser;
-            string SubKeyPath = @"Software\Microsoft\Windows\CurrentVersion\Internet Settings";
-            RegistryKey optionKey = regKey.OpenSubKey(SubKeyPath, true);
-            //更改健值，设置代理，
-            optionKey.SetValue("ProxyEnable", 1);
-            if (ip_port.Length == 0)
-            {
-                optionKey.SetValue("ProxyEnable", 0);
-            }
-            optionKey.SetValue("ProxyServer", ip_port);
+        #region 刷排名        
+        
+        /// <summary>
+        /// 当前正在操作的状态
+        /// </summary>
+        private string Status;
+  
+        private WatchCommon watchCommon;
+        /// <summary>
+        /// 当前所在页索引
+        /// </summary>
+        private int pageindex = 1;
+        /// <summary>
+        /// 每次滚动屏幕的高度
+        /// </summary>
+        private const int height = 200;
+        /// <summary>
+        /// 已经移动滚动条的次数
+        /// </summary>
+        private int movebarcount = 0;
+        /// <summary>
+        /// 商品页面浏览的时间
+        /// </summary>
+        private int scantime = 0;
+        /// <summary>
+        /// 毫秒->秒
+        /// </summary>
+        private const int interval = 1000;
+        /// <summary>
+        /// 当前商品详情有几屏
+        /// </summary>
+        private int pagecount = 1;
+        /// <summary>
+        /// 深度浏览的数量
+        /// </summary>
+        private int depthviewindex = 1;
+        /// <summary>
+        /// 是否筛选了价格
+        /// </summary>
+        private bool isChoosePrice = true;
+        /// <summary>
+        /// 是否筛选了地区
+        /// </summary>
+        private bool isChooseAre = true;
 
-            //激活代理设置
-            InternetSetOption(0, 39, IntPtr.Zero, 0);
-            InternetSetOption(0, 37, IntPtr.Zero, 0);
+        private void InitVariable()
+        {
+            Status = string.Empty;
+            pageindex = 1;
+            movebarcount = 0;
+            scantime = 0;
+            pagecount = 1;
+            depthviewindex = 1;
         }
 
         private void btn_start_Click(object sender, EventArgs e)
         {
+            InitVariable();
+            watchCommon = new WatchCommon(iplist, txtScanStart.Text.ToInt(5), txtScanEnd.Text.ToInt(10), txtCount.Text.ToInt(1), txtDepthView.Text.ToInt(0));
             tmKey.Start();
             this.btn_start.Enabled = false;
+            isChoosePrice = !txtPriceStart.Text.ToInt(0) > 0;
+            isChooseAre = !txtArea.Text.Length > 0;
         }
 
         private void tmKey_Tick(object sender, EventArgs e)
         {
             try
             {
-                tmKey.Interval = 60000;//30秒一次                
+                Status = "KeySearch";
+                
+                IpModel model = watchCommon.InitWatch(out scantime);
+                tmKey.Interval = scantime * 60 * interval;
                 var url = "www.taobao.com";
-                //验证代理IP
-                //Model.IpModel model = GetCanUseIp();
-                //var ipresult = YanzhengIp(model.Ip, int.Parse(model.IpPort));
-                //if (ipresult != null && ipresult != "Error")
-                //{
-                    //model.UsedNumber++;
-                    //model.LastUseTime = DateTime.Now;
-                    ////SetProxy(model.Ip + ":" + model.IpPort);
-                    //WriteLog(model.Ip + ":" + model.IpPort, "");
-                    axWebBrowser1.Navigate(url);
-                //}
-                //else
-                //{
-                //    //WriteLog(model.Ip + ":" + model.IpPort, "代理IP不可用");
-                //}
+                //验证代理IP                
+                var ipresult = Util.YanzhengIp(model.Ip, int.Parse(model.IpPort));
+                if (ipresult)
+                {                    
+                    Util.SetProxy(model.Ip + ":" + model.IpPort);
+                    WriteLog(model.Ip + ":" + model.IpPort, "");
+                    myWebBrowser.Navigate(url);
+                }
+                else
+                {
+                    WriteLog(model.Ip + ":" + model.IpPort, "代理IP不可用");
+                }
             }
             catch (Exception ex)
             {
@@ -369,90 +370,196 @@ namespace WatchTaobao
             }
         }
 
-        private Model.IpModel GetCanUseIp()
-        {
-            List<Model.IpModel> listtemp = iplist.Where(a => a.DaiLiType == 0 && a.UsedNumber < 6).ToList();
-            return CustomLib.OtherHelper.GetRandomList(listtemp).First(a => a.Ip.Length > 0);
-        }
-
         private void axWebBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            KeySearch();
+            switch (Status)
+            {
+                case "KeySearch":
+                    KeySearch();
+                    break;
+                case "Filtering":
+                    Filtering();
+                    break;
+                case "SearchProduct":
+                    SearchProduct();
+                    break;
+                case "BrowseProducts":
+                    BrowseProducts();
+                    break;
+            }
         }
 
+        /// <summary>
+        /// 关键字搜索
+        /// </summary>
         private void KeySearch()
         {
             try
             {
-                var mm = this.axWebBrowser1.Document;
-                var webtitile = this.axWebBrowser1.Document.Title;
-                if (webtitile == "淘宝网 - 淘！我喜欢")
+                HtmlElement txtcontent = myWebBrowser.Document.GetElementById("q");
+                HtmlElement btnSubmit = myWebBrowser.Document.GetElementsByTagName("button")[0];
+                if (txtcontent == null || btnSubmit == null)
                 {
-                    HtmlElement txtcontent = axWebBrowser1.Document.GetElementById("q");
-                    HtmlElement btnSubmit = axWebBrowser1.Document.GetElementsByTagName("button")[0];
-                    if (txtcontent == null || btnSubmit == null)
-                    {
-                        return;
-                    }
-                    var keywords = txtKeyWord.Text;// "我的美丽日记";
-                    txtcontent.SetAttribute("value", keywords);
-                    int xxvlaue = 1000;
-                    Thread.Sleep(xxvlaue);
-                    btnSubmit.InvokeMember("click");
+                    return;
                 }
-                else if (this.axWebBrowser1.Url.ToString().IndexOf("www.baidu.com") >= 0)
+                var keywords = txtKeyWord.Text;
+                txtcontent.SetAttribute("value", keywords);
+                int xxvlaue = 2000;
+                Thread.Sleep(xxvlaue);
+                btnSubmit.InvokeMember("click");
+                if (txtPriceStart.Text.ToInt() > 0 || txtArea.Text.Length > 0)
                 {
-                    //HtmlElementCollection link = axWebBrowser1.Document.GetElementsByTagName("a");
-                    //for (int i = 0; i < link.Count; i++)
-                    //{
-                    //    if (!string.IsNullOrEmpty(link[i].InnerText))
-                    //    {
-                    //        var xxtitle = this.txt_baidu.Text;
-                    //        if (link[i].InnerText.IndexOf(xxtitle) != -1)
-                    //        {
-                    //            weburl = link[i].GetAttribute("href");
-                    //            link[i].InvokeMember("click");
-                    //        }
-                    //    }
-                    //}
-                }
-                else if (this.axWebBrowser1.Url.ToString().IndexOf("www.360yi.net") >= 0
-                    ||
-                    this.axWebBrowser1.Url.ToString().IndexOf("suchso.com") >= 0
-                    )
-                {
-                    //timerClickAds.Interval = 20000;// 
-                    //
-                    //timerClickAds.Start();
+                    Status = "Filtering";
                 }
                 else
                 {
-                    //滚动条
-                    //还要输入密码吗
-                    axWebBrowser1.Document.Window.ScrollTo(0, axWebBrowser1.Document.Body.ScrollRectangle.Height / 10);
+                    Status = "SearchProduct";
                 }
             }
             catch (Exception ex)
             {
-                //CustomLib.Log.logger(ex.Message);
+                WriteLog(ex.Message, ex.StackTrace);
             }
         }
-        #endregion
 
-        [DllImport(@"wininet",
- SetLastError = true,
- CharSet = CharSet.Auto,
- EntryPoint = "InternetSetOption",
- CallingConvention = CallingConvention.StdCall)]
-        public static extern bool InternetSetOption
-        (
-        int hInternet,
-        int dmOption,
-        IntPtr lpBuffer,
-        int dwBufferLength
-        );
+        /// <summary>
+        /// 内容筛选
+        /// </summary>
+        private void Filtering()
+        {
+            try
+            {
+                Thread.Sleep(txtInterval.Text.ToInt());
 
-        
+                if (!isChoosePrice)
+                {
+                    HtmlElement txtcontent = myWebBrowser.Document.GetElementById("q");
+                    HtmlElement btnSubmit = myWebBrowser.Document.GetElementsByTagName("button")[0];
+                    if (txtcontent == null || btnSubmit == null)
+                    {
+                        return;
+                    }
 
+                    isChoosePrice = true;
+                }
+                else if (!isChooseAre)
+                {
+                    isChooseAre = true;
+                }
+
+                if (isChoosePrice && isChooseAre) Status = "SearchProduct";
+            }
+            catch (Exception ex)
+            {
+                WriteLog("内容筛选出错:" + ex.Message, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// 查找商品
+        /// </summary>
+        private void SearchProduct()
+        {
+            try
+            {
+                Thread.Sleep(txtInterval.Text.ToInt());
+
+                //如果找到产品,将pageindex=0,跳转到商品页面Status = "BrowseProducts";
+                string link = SearchLink(txtProductID.Text);
+
+                if (link == "")
+                {
+                    pageindex++;
+
+                    if (pageindex > txtMaxPagNo.Text.ToInt(50) && Status == "SearchProduct")
+                    {
+                        //结束当前的过程,需要调整最大搜索页面
+                    }
+                }
+                else
+                {
+                    Status = "BrowseProducts";
+                    myWebBrowser.Navigate(link);
+                }
+            }
+            catch (Exception ex)
+            {
+                WriteLog("查找商品出错:" + ex.Message, ex.StackTrace);
+            }
+        }
+
+        /// <summary>
+        /// 浏览商品
+        /// </summary>
+        private void BrowseProducts()
+        {
+            Thread.Sleep(txtInterval.Text.ToInt());
+
+            //一共有几屏
+            //一屏占用的时间
+            pagecount = myWebBrowser.Document.Body.ScrollRectangle.Height / height + 1;
+            tmBrowse.Enabled = true;
+        }
+
+        /// <summary>
+        /// 浏览商品时间控制
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void tmBrowse_Tick(object sender, EventArgs e)
+        {
+            int pagetime = (scantime / pagecount) * 60 * interval;
+            tmBrowse.Interval = pagetime;
+            tmBrowse.Enabled = false;
+
+            if (movebarcount == pagecount)
+            {
+                if (txtDepthView.Text.ToInt(0) > 0)
+                {
+                    DepthView();
+                }
+                else
+                {
+                    btn_start.Enabled = true;
+                }
+            }
+            else
+            {
+                myWebBrowser.Document.Window.ScrollTo(0, height * movebarcount);
+                movebarcount++;
+                tmBrowse.Enabled = true;
+            }
+        }
+
+        /// <summary>
+        /// 深度浏览
+        /// </summary>
+        private void DepthView()
+        {
+            movebarcount = 0;
+
+            //查找商品的链接
+            string link = SearchLink("");
+            myWebBrowser.Navigate(link);
+        }
+
+        /// <summary>
+        /// 查询商品链接,如果没有传商品ID,则返回当前页面中第一个商品链接
+        /// </summary>
+        /// <param name="productID"></param>
+        /// <returns></returns>
+        private string SearchLink(string productID)
+        {
+            int index = 0;
+            if (productID.Length > 0)
+            {
+                //brix_brick_40
+
+                WriteLog(string.Format("{0}目前排名是 第{1}页  第{2}位", productID, pageindex.ToString(), index.ToString()), "");
+            }
+
+            return "";
+        }
+        #endregion        
     }
 }
