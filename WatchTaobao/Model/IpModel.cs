@@ -89,6 +89,7 @@ namespace WatchTaobao.Model
     /// </summary>
     public class IPAndProduct
     {
+        public int ID { get; set; }
         public string IP { get; set; }
         public string ProductID { get; set; }
         public int Number { get; set; }

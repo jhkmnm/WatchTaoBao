@@ -279,12 +279,15 @@ namespace WatchTaobao
 
         #region 刷排名        
         
+        private WatchCommon watchCommon;
+        private List<IPAndProduct> papList = new List<IPAndProduct>();
+        private IpModel model;
+
         /// <summary>
         /// 当前正在操作的状态
         /// </summary>
         private string Status;
-  
-        private WatchCommon watchCommon;
+        
         /// <summary>
         /// 当前所在页索引
         /// </summary>
@@ -348,7 +351,7 @@ namespace WatchTaobao
             {
                 Status = "KeySearch";
                 
-                IpModel model = watchCommon.InitWatch(out scantime);
+                model = watchCommon.InitWatch(out scantime);
                 tmKey.Interval = scantime * 60 * interval;
                 var url = "www.taobao.com";
                 //验证代理IP                
@@ -494,6 +497,12 @@ namespace WatchTaobao
         private void BrowseProducts()
         {
             Thread.Sleep(txtInterval.Text.ToInt());
+
+            IPAndProduct pap = new IPAndProduct();
+            pap.ID = model.id;
+            pap.ProductID = "";
+            pap.Number++;
+            papList.Add(pap);
 
             //一共有几屏
             //一屏占用的时间
