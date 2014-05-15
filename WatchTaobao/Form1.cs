@@ -10,7 +10,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using HtmlAgilityPack;
 using Microsoft.Win32;
@@ -98,7 +97,7 @@ namespace WatchTaobao
         private void GetHrefs(HtmlAgilityPack.HtmlDocument _doc)
         {
             string todaydaili = DateTime.Now.ToString("MM月dd日");
-            HtmlNodeCollection hrefs = _doc.DocumentNode.SelectNodes("//ul/li/a");
+            HtmlNodeCollection hrefs = _doc.DocumentNode.SelectNodes("//ul/li/a");            
             //myWebBrowser.Document.Window.ScrollTo(0, height * movebarcount);
             
             if (hrefs == null)
@@ -305,7 +304,7 @@ namespace WatchTaobao
         public void WriteLog(string message, string stackTrace)
         {
             string dividing = "-------------------------------";
-            txtLog.Text = string.Format("{0}{1}{2}{1}{3}{1}{0}", dividing, Environment.NewLine, message, stackTrace);
+            txtLog.Text += string.Format("{0}{1}{2}{1}{3}{1}{0}", dividing, Environment.NewLine, message, stackTrace);
         }
 
         public class ComboBoxItem
@@ -338,7 +337,7 @@ namespace WatchTaobao
         /// <summary>
         /// 每次滚动屏幕的高度
         /// </summary>
-        private const int height = 500;
+        private const int height = 600;
         /// <summary>
         /// 已经移动滚动条的次数
         /// </summary>
@@ -367,6 +366,18 @@ namespace WatchTaobao
         /// 是否筛选了地区
         /// </summary>
         private bool isChooseAre = true;
+        /// <summary>
+        /// 是否查看了评论
+        /// </summary>
+        private bool isSeeAnchor = false;
+        /// <summary>
+        /// 是否查看了成交记录
+        /// </summary>
+        private bool isSeeRecord = false;
+        /// <summary>
+        /// 页面加载的次数
+        /// </summary>
+        private int LoderCount = 0;
 
         [DllImport("shell32.dll")]
         static extern IntPtr ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, ShowCommands nShowCmd);
@@ -379,6 +390,8 @@ namespace WatchTaobao
             scantime = 0;
             pagecount = 1;
             depthviewindex = 1;
+            isSeeAnchor = false;
+            isSeeRecord = false;
         }
 
         private void btn_start_Click(object sender, EventArgs e)
@@ -475,7 +488,12 @@ namespace WatchTaobao
             //    return; 
             //if (e.Url != myWebBrowser.Url)
             //    return;
-            while (myWebBrowser.ReadyState < WebBrowserReadyState.Complete) Application.DoEvents();
+            while (myWebBrowser.ReadyState < WebBrowserReadyState.Complete && LoderCount < 50)
+            {
+                Application.DoEvents();
+                LoderCount++;
+            }
+            LoderCount = 0;    
 
             Util.SetAllWebItemSelf(this.myWebBrowser.Document.All);
 
@@ -624,8 +642,9 @@ namespace WatchTaobao
 
             //一共有几屏
             //一屏占用的时间
-            pagecount = myWebBrowser.Document.Body.ScrollRectangle.Height / height + 1;
+            pagecount = myWebBrowser.Document.Body.ScrollRectangle.Height / height;
             tmBrowse.Enabled = true;
+            Status = "";
             WriteLog("5.1 打开商品页", "");
         }
 
@@ -636,20 +655,25 @@ namespace WatchTaobao
         /// <param name="e"></param>
         private void tmBrowse_Tick(object sender, EventArgs e)
         {
-            int pagetime = (int)((scantime / (pagecount * 1.00)) * 60 * interval);
+            int pagetime = (int)((scantime / (pagecount * 1.00)) * 30 * interval);
             tmBrowse.Interval = pagetime;
             tmBrowse.Enabled = false;
 
             if (movebarcount == pagecount)
             {
-                if (txtDepthView.Text.ToInt(0) > 0)
+                if (!isSeeAnchor || !isSeeRecord)
+                {
+                    SeeReviews();
+                    tmBrowse.Enabled = true;
+                }
+                else if (txtDepthView.Text.ToInt(0) > 0)
                 {
                     DepthView();
                 }
                 else
                 {
-                    Start();
                     WriteLog("5.3 商品页浏览完成", "");
+                    Start();                    
                 }
             }
             else
@@ -672,6 +696,32 @@ namespace WatchTaobao
             HtmlElement nextpage = null;
             HtmlElement link = SearchLink("", out nextpage);
             link.InvokeMember("click");
+        }
+
+        /// <summary>
+        /// 查看评论
+        /// </summary>
+        private void SeeReviews()
+        {
+            foreach (HtmlElement a in myWebBrowser.Document.Links)
+            {
+                string classname = ((mshtml.HTMLAnchorElement)a.DomElement).className;
+                if (classname == "tb-tab-anchor" && a.OuterText != "宝贝详情")
+                {
+                    a.InvokeMember("click");
+                    if (a.OuterText.IndexOf("评论") >= 0)
+                    {
+                        isSeeAnchor = true;
+                        WriteLog("5.4 查看累计评论", "");
+                    }                        
+
+                    if (a.OuterText.IndexOf("成交") >= 0)
+                    {
+                        isSeeRecord = true;
+                        WriteLog("5.4 查看成交记录", "");
+                    }                        
+                }
+            }
         }
 
         /// <summary>

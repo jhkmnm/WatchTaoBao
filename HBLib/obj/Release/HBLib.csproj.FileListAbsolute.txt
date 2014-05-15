@@ -1,0 +1,4 @@
+E:\Dev\WatchTaoBao\HBLib\bin\Release\HBLib.dll
+E:\Dev\WatchTaoBao\HBLib\bin\Release\HBLib.pdb
+E:\Dev\WatchTaoBao\HBLib\obj\Release\HBLib.dll
+E:\Dev\WatchTaoBao\HBLib\obj\Release\HBLib.pdb

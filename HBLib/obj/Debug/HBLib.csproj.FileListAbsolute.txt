@@ -1,0 +1,5 @@
+E:\Dev\WatchTaoBao\HBLib\bin\Debug\HBLib.dll
+E:\Dev\WatchTaoBao\HBLib\bin\Debug\HBLib.pdb
+E:\Dev\WatchTaoBao\HBLib\obj\Debug\HBLib.csprojResolveAssemblyReference.cache
+E:\Dev\WatchTaoBao\HBLib\obj\Debug\HBLib.dll
+E:\Dev\WatchTaoBao\HBLib\obj\Debug\HBLib.pdb

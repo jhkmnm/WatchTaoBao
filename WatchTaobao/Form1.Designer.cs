@@ -31,6 +31,7 @@
             this.components = new System.ComponentModel.Container();
             this.tabMain = new System.Windows.Forms.TabControl();
             this.tabFindIP = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.cbx_caijitype = new System.Windows.Forms.ComboBox();
             this.txt_end = new System.Windows.Forms.TextBox();
@@ -59,7 +60,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.txtScanEnd = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.myWebBrowser = new System.Windows.Forms.WebBrowser();
+            this.myWebBrowser1 = new System.Windows.Forms.WebBrowser();
             this.txtProductID = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.txtKeyWord = new System.Windows.Forms.TextBox();
@@ -76,7 +77,7 @@
             this.tmFindIP = new System.Windows.Forms.Timer(this.components);
             this.tmKey = new System.Windows.Forms.Timer(this.components);
             this.tmBrowse = new System.Windows.Forms.Timer(this.components);
-            this.button1 = new System.Windows.Forms.Button();
+            this.myWebBrowser = new 淘宝登货员.ExWebBrowser();
             this.tabMain.SuspendLayout();
             this.tabFindIP.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -115,12 +116,26 @@
             this.tabFindIP.Text = "采购代理IP";
             this.tabFindIP.UseVisualStyleBackColor = true;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(655, 40);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 53;
+            this.button1.Text = "开始采集";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // txtLog
             // 
+            this.txtLog.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtLog.Location = new System.Drawing.Point(6, 192);
             this.txtLog.Multiline = true;
             this.txtLog.Name = "txtLog";
-            this.txtLog.Size = new System.Drawing.Size(822, 404);
+            this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtLog.Size = new System.Drawing.Size(822, 425);
             this.txtLog.TabIndex = 52;
             // 
             // cbx_caijitype
@@ -237,6 +252,7 @@
             // 
             // tabWatch
             // 
+            this.tabWatch.Controls.Add(this.myWebBrowser);
             this.tabWatch.Controls.Add(this.txtInterval);
             this.tabWatch.Controls.Add(this.txtArea);
             this.tabWatch.Controls.Add(this.label15);
@@ -251,7 +267,7 @@
             this.tabWatch.Controls.Add(this.label3);
             this.tabWatch.Controls.Add(this.txtScanEnd);
             this.tabWatch.Controls.Add(this.label2);
-            this.tabWatch.Controls.Add(this.myWebBrowser);
+            this.tabWatch.Controls.Add(this.myWebBrowser1);
             this.tabWatch.Controls.Add(this.txtProductID);
             this.tabWatch.Controls.Add(this.label11);
             this.tabWatch.Controls.Add(this.txtKeyWord);
@@ -387,7 +403,7 @@
             this.txtScanEnd.Name = "txtScanEnd";
             this.txtScanEnd.Size = new System.Drawing.Size(33, 21);
             this.txtScanEnd.TabIndex = 71;
-            this.txtScanEnd.Text = "15";
+            this.txtScanEnd.Text = "3";
             // 
             // label2
             // 
@@ -398,17 +414,16 @@
             this.label2.TabIndex = 70;
             this.label2.Text = "次";
             // 
-            // myWebBrowser
+            // myWebBrowser1
             // 
-            this.myWebBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.myWebBrowser1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.myWebBrowser.Location = new System.Drawing.Point(6, 170);
-            this.myWebBrowser.MinimumSize = new System.Drawing.Size(20, 20);
-            this.myWebBrowser.Name = "myWebBrowser";
-            this.myWebBrowser.Size = new System.Drawing.Size(827, 452);
-            this.myWebBrowser.TabIndex = 69;
-            this.myWebBrowser.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.axWebBrowser1_DocumentCompleted);
+            this.myWebBrowser1.Location = new System.Drawing.Point(6, 370);
+            this.myWebBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+            this.myWebBrowser1.Name = "myWebBrowser1";
+            this.myWebBrowser1.Size = new System.Drawing.Size(827, 252);
+            this.myWebBrowser1.TabIndex = 69;
             // 
             // txtProductID
             // 
@@ -479,7 +494,7 @@
             this.txtScanStart.Name = "txtScanStart";
             this.txtScanStart.Size = new System.Drawing.Size(33, 21);
             this.txtScanStart.TabIndex = 57;
-            this.txtScanStart.Text = "5";
+            this.txtScanStart.Text = "1";
             // 
             // label9
             // 
@@ -538,15 +553,18 @@
             // 
             this.tmBrowse.Tick += new System.EventHandler(this.tmBrowse_Tick);
             // 
-            // button1
+            // myWebBrowser
             // 
-            this.button1.Location = new System.Drawing.Point(655, 40);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 53;
-            this.button1.Text = "开始采集";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.myWebBrowser.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.myWebBrowser.Location = new System.Drawing.Point(6, 162);
+            this.myWebBrowser.MinimumSize = new System.Drawing.Size(20, 20);
+            this.myWebBrowser.Name = "myWebBrowser";
+            this.myWebBrowser.ScriptErrorsSuppressed = true;
+            this.myWebBrowser.Size = new System.Drawing.Size(825, 455);
+            this.myWebBrowser.TabIndex = 84;
+            this.myWebBrowser.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.axWebBrowser1_DocumentCompleted);
             // 
             // Form1
             // 
@@ -599,7 +617,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox txtCount;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.WebBrowser myWebBrowser;
+        private System.Windows.Forms.WebBrowser myWebBrowser1;
         private System.Windows.Forms.Timer tmKey;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox txtDepthView;
@@ -617,6 +635,7 @@
         private System.Windows.Forms.Timer tmBrowse;
         private System.Windows.Forms.TextBox txtInterval;
         private System.Windows.Forms.Button button1;
+        private 淘宝登货员.ExWebBrowser myWebBrowser;
     }
 }
 
