@@ -471,10 +471,11 @@ namespace WatchTaobao
 
         private void axWebBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            if(myWebBrowser.ReadyState != WebBrowserReadyState.Complete)
-                return; 
-            if (e.Url != myWebBrowser.Url)
-                return;            
+            //if(myWebBrowser.ReadyState != WebBrowserReadyState.Complete)
+            //    return; 
+            //if (e.Url != myWebBrowser.Url)
+            //    return;
+            while (myWebBrowser.ReadyState < WebBrowserReadyState.Complete) Application.DoEvents();
 
             Util.SetAllWebItemSelf(this.myWebBrowser.Document.All);
 
