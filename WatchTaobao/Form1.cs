@@ -16,6 +16,7 @@ using HtmlAgilityPack;
 using Microsoft.Win32;
 using WatchTaobao.Model;
 using mshtml;
+using System.Diagnostics;
 
 namespace WatchTaobao
 {
@@ -98,6 +99,8 @@ namespace WatchTaobao
         {
             string todaydaili = DateTime.Now.ToString("MM月dd日");
             HtmlNodeCollection hrefs = _doc.DocumentNode.SelectNodes("//ul/li/a");
+            //myWebBrowser.Document.Window.ScrollTo(0, height * movebarcount);
+            
             if (hrefs == null)
                 return;
 
@@ -365,6 +368,9 @@ namespace WatchTaobao
         /// </summary>
         private bool isChooseAre = true;
 
+        [DllImport("shell32.dll")]
+        static extern IntPtr ShellExecute(IntPtr hwnd, string lpOperation, string lpFile, string lpParameters, string lpDirectory, ShowCommands nShowCmd);
+
         private void InitVariable()
         {
             Status = string.Empty;
@@ -377,44 +383,99 @@ namespace WatchTaobao
 
         private void btn_start_Click(object sender, EventArgs e)
         {
-            InitVariable();
-            watchCommon = new WatchCommon(iplist, txtScanStart.Text.ToInt(5), txtScanEnd.Text.ToInt(10), txtCount.Text.ToInt(1), txtDepthView.Text.ToInt(0));
-            tmKey.Start();
+            watchCommon = new WatchCommon(iplist, txtScanStart.Text.ToInt(5), txtScanEnd.Text.ToInt(10), txtCount.Text.ToInt(1), txtDepthView.Text.ToInt(0));            
             this.btn_start.Enabled = false;
+            Start();
+        }
+
+        /// <summary>
+        /// 清除本地浏览信息，cookies
+        /// </summary>
+        private void ClearCookies()
+        {
+            //清除IE临时文件
+            ShellExecute(IntPtr.Zero, "open", "rundll32.exe", " InetCpl.cpl,ClearMyTracksByProcess 255", "", ShowCommands.SW_HIDE);
+
+            //Process process = new Process();
+            //process.StartInfo.FileName = "RunDll32.exe";
+            //process.StartInfo.Arguments = "InetCpl.cpl,ClearMyTracksByProcess 255";
+            //process.StartInfo.UseShellExecute = false;        //关闭Shell的使用
+            //process.StartInfo.RedirectStandardInput = true;   //重定向标准输入
+            //process.StartInfo.RedirectStandardOutput = true;  //重定向标准输出
+            //process.StartInfo.RedirectStandardError = true;   //重定向错误输出
+            //process.StartInfo.CreateNoWindow = true;
+            //process.Start();
+
+        }
+
+        /// <summary>
+        /// 修改MAC地址
+        /// </summary>
+        private void ChangeMAC()
+        { 
+            
+        }
+
+        /// <summary>
+        /// 开始执行
+        /// </summary>
+        private void Start()
+        {
+            InitVariable();
+            tmKey.Enabled = true;
             isChoosePrice = !(txtPriceStart.Text.ToInt(0) > 0);
             isChooseAre = !(txtArea.Text.Length > 0);
+        }
+
+        private void End()
+        {
+            btn_start.Enabled = true;
         }
 
         private void tmKey_Tick(object sender, EventArgs e)
         {
             try
             {
+                tmKey.Enabled = false;
                 Status = "KeySearch";
                 
                 model = watchCommon.InitWatch(out scantime);
-                tmKey.Interval = scantime * 60 * interval;
-                var url = "http://www.taobao.com/";
-                //验证代理IP                
-                var ipresult = Util.YanzhengIp(model.Ip, int.Parse(model.IpPort));
-                if (ipresult)
-                {                    
-                    Util.SetProxy(model.Ip + ":" + model.IpPort);
-                    WriteLog(model.Ip + ":" + model.IpPort, "");
-                    myWebBrowser.Navigate(url);
-                }
+                if (model == null)
+                    End();
                 else
                 {
-                    WriteLog(model.Ip + ":" + model.IpPort, "代理IP不可用");
+                    //tmKey.Interval = scantime * 60 * interval;
+                    var url = "http://www.taobao.com/";
+                    //验证代理IP
+                    var ipresult = Util.YanzhengIp(model.Ip, int.Parse(model.IpPort));
+                    if (ipresult)
+                    {
+                        Util.SetProxy(model.Ip + ":" + model.IpPort);
+                        WriteLog(model.Ip + ":" + model.IpPort, "");
+                        myWebBrowser.Navigate(url);
+                        WriteLog("1. 跳转到" + url, "");
+                    }
+                    else
+                    {
+                        WriteLog(model.Ip + ":" + model.IpPort, "代理IP不可用");
+                        Start();
+                    }
                 }
             }
             catch (Exception ex)
             {
                 WriteLog(ex.Message, ex.StackTrace);
+                End();
             }
         }
 
         private void axWebBrowser1_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
+            if(myWebBrowser.ReadyState != WebBrowserReadyState.Complete)
+                return; 
+            if (e.Url != myWebBrowser.Url)
+                return;            
+
             Util.SetAllWebItemSelf(this.myWebBrowser.Document.All);
 
             switch (Status)
@@ -460,10 +521,13 @@ namespace WatchTaobao
                 {
                     Status = "SearchProduct";
                 }
+
+                WriteLog("2. 设置关键词并搜索完成", "");
             }
             catch (Exception ex)
             {
                 WriteLog(ex.Message, ex.StackTrace);
+                End();
             }
         }
 
@@ -497,6 +561,7 @@ namespace WatchTaobao
             catch (Exception ex)
             {
                 WriteLog("内容筛选出错:" + ex.Message, ex.StackTrace);
+                End();
             }
         }
 
@@ -525,6 +590,7 @@ namespace WatchTaobao
                         if (nextpage != null)
                         {
                             nextpage.InvokeMember("click");
+                            WriteLog("4.1 未找到商品，跳转到下一页", "");
                         }
                     }
                 }
@@ -532,11 +598,13 @@ namespace WatchTaobao
                 {
                     Status = "BrowseProducts";
                     link.InvokeMember("click");
+                    WriteLog("4.2 找到商品，跳转到商品页", "");
                 }
             }
             catch (Exception ex)
             {
                 WriteLog("查找商品出错:" + ex.Message, ex.StackTrace);
+                End();
             }
         }
 
@@ -557,6 +625,7 @@ namespace WatchTaobao
             //一屏占用的时间
             pagecount = myWebBrowser.Document.Body.ScrollRectangle.Height / height + 1;
             tmBrowse.Enabled = true;
+            WriteLog("5.1 打开商品页", "");
         }
 
         /// <summary>
@@ -578,7 +647,8 @@ namespace WatchTaobao
                 }
                 else
                 {
-                    btn_start.Enabled = true;
+                    Start();
+                    WriteLog("5.3 商品页浏览完成", "");
                 }
             }
             else
@@ -586,6 +656,7 @@ namespace WatchTaobao
                 myWebBrowser.Document.Window.ScrollTo(0, height * movebarcount);
                 movebarcount++;
                 tmBrowse.Enabled = true;
+                WriteLog("5.2 浏览商品页，滚动页面", "");
             }
         }
 
@@ -628,7 +699,7 @@ namespace WatchTaobao
                             var s = v.Children[i];
                             if (s.InnerHtml.IndexOf(productID) > 0)
                             {
-                                index = i;
+                                index = i;                                
                                 var a = s.GetElementsByTagName("a");
                                 link = a[0];
                                 //Regex reg = new Regex("http\\s*(?:\"(?<1>[^\"]*)\"|(?<1>\\S+))", RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -655,5 +726,10 @@ namespace WatchTaobao
             return link;
         }
         #endregion        
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            ClearCookies();
+        }
     }
 }

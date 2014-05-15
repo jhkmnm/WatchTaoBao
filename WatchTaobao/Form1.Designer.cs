@@ -76,6 +76,7 @@
             this.tmFindIP = new System.Windows.Forms.Timer(this.components);
             this.tmKey = new System.Windows.Forms.Timer(this.components);
             this.tmBrowse = new System.Windows.Forms.Timer(this.components);
+            this.button1 = new System.Windows.Forms.Button();
             this.tabMain.SuspendLayout();
             this.tabFindIP.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -95,6 +96,7 @@
             // 
             // tabFindIP
             // 
+            this.tabFindIP.Controls.Add(this.button1);
             this.tabFindIP.Controls.Add(this.txtLog);
             this.tabFindIP.Controls.Add(this.cbx_caijitype);
             this.tabFindIP.Controls.Add(this.txt_end);
@@ -536,6 +538,16 @@
             // 
             this.tmBrowse.Tick += new System.EventHandler(this.tmBrowse_Tick);
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(655, 40);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 53;
+            this.button1.Text = "开始采集";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -604,6 +616,7 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Timer tmBrowse;
         private System.Windows.Forms.TextBox txtInterval;
+        private System.Windows.Forms.Button button1;
     }
 }
 
