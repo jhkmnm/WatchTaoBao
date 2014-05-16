@@ -83,6 +83,18 @@ namespace WatchTaobao
                 HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
                 doc.Load(sr);
                 GetHrefs(doc);
+
+                HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument();
+                htmlDoc.Load(Server.MapPath("~/test.txt"));
+                HtmlNodeCollection nodes = htmlDoc.DocumentNode.SelectNodes(@"//tbody//tr");
+                foreach (HtmlNode node in nodes)
+                {
+                    Response.Write(node.SelectSingleNode(@"td[1]/a").Attributes["href"].Value + "<br/>");
+                    Response.Write(node.SelectSingleNode(@"td[1]/a").InnerText + "<br/>");
+                    Response.Write(node.SelectSingleNode(@"td[2]/span").InnerText + "<br/>");
+                    Response.Write(node.SelectSingleNode(@"td[3]").InnerText + "<br/>");
+                    Response.Write(node.SelectSingleNode(@"td[4]/span").InnerText + "<br/>");
+                } 
             }
             catch (Exception e)
             {
@@ -521,6 +533,7 @@ namespace WatchTaobao
         {
             try
             {
+                myWebBrowser1.Document
                 HtmlElement txtcontent = myWebBrowser.Document.GetElementById("q");
                 HtmlElement btnSubmit = myWebBrowser.Document.GetElementsByTagName("button")[0];
                 if (txtcontent == null || btnSubmit == null)
@@ -780,7 +793,7 @@ namespace WatchTaobao
 
         private void button1_Click(object sender, EventArgs e)
         {
-            ClearCookies();
+            
         }
     }
 }
